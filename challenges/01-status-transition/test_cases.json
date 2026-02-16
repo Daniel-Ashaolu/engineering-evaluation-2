@@ -1,0 +1,79 @@
+[
+  {
+    "id": "valid_todo_to_in_progress",
+    "from": "todo",
+    "to": "in_progress",
+    "expected_valid": true,
+    "expected_error_code": null
+  },
+  {
+    "id": "valid_in_progress_to_todo",
+    "from": "in_progress",
+    "to": "todo",
+    "expected_valid": true,
+    "expected_error_code": null
+  },
+  {
+    "id": "valid_in_progress_to_done",
+    "from": "in_progress",
+    "to": "done",
+    "expected_valid": true,
+    "expected_error_code": null
+  },
+  {
+    "id": "invalid_todo_to_done",
+    "from": "todo",
+    "to": "done",
+    "expected_valid": false,
+    "expected_error_code": "INVALID_TRANSITION"
+  },
+  {
+    "id": "invalid_done_to_todo",
+    "from": "done",
+    "to": "todo",
+    "expected_valid": false,
+    "expected_error_code": "INVALID_TRANSITION"
+  },
+  {
+    "id": "invalid_done_to_in_progress",
+    "from": "done",
+    "to": "in_progress",
+    "expected_valid": false,
+    "expected_error_code": "INVALID_TRANSITION"
+  },
+  {
+    "id": "invalid_todo_to_todo",
+    "from": "todo",
+    "to": "todo",
+    "expected_valid": false,
+    "expected_error_code": "SELF_TRANSITION"
+  },
+  {
+    "id": "invalid_in_progress_to_in_progress",
+    "from": "in_progress",
+    "to": "in_progress",
+    "expected_valid": false,
+    "expected_error_code": "SELF_TRANSITION"
+  },
+  {
+    "id": "invalid_done_to_done",
+    "from": "done",
+    "to": "done",
+    "expected_valid": false,
+    "expected_error_code": "SELF_TRANSITION"
+  },
+  {
+    "id": "invalid_status_from_blocked",
+    "from": "blocked",
+    "to": "todo",
+    "expected_valid": false,
+    "expected_error_code": "INVALID_STATUS"
+  },
+  {
+    "id": "invalid_status_to_blocked",
+    "from": "todo",
+    "to": "blocked",
+    "expected_valid": false,
+    "expected_error_code": "INVALID_STATUS"
+  }
+]
