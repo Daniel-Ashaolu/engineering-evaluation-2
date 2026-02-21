@@ -13,7 +13,7 @@ The goal is to evaluate engineering judgment in realistic, product-oriented exer
 
 ## Candidate Submission Flow
 
-1. Fork this repository.
+1. Clone this repository.
 2. Create a branch named `solution/<firstname-lastname>`.
 3. Complete the assigned challenge in `solutions/<firstname-lastname>/`.
 4. Add a short `README.md` inside your solution folder covering:
