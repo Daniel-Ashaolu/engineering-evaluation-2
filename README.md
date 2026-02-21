@@ -1,40 +1,78 @@
-# DonaLabs Engineering Evaluation Repository
+# Workflow Status Playground
 
-This repository contains reusable full-stack engineering challenges used in the DonaLabs hiring process.
+A single-file web app demonstrating a workflow state machine with a UI to attempt transitions, receive feedback, and test edge cases.
 
-## Purpose
+## Approach
 
-The goal is to evaluate engineering judgment in realistic, product-oriented exercises:
+**State machine first.** The core logic lives in two pure data structures and one pure function:
 
-- How candidates interpret ambiguity
-- How they model logic and structure code
-- How they connect backend logic to UI behavior
-- How clearly they communicate tradeoffs
+```js
+const VALID_STATUSES = new Set(['todo', 'in_progress', 'done']);
 
-## Candidate Submission Flow
+const ALLOWED_TRANSITIONS = {
+  todo: ['in_progress'],
+  in_progress: ['todo', 'done'],
+  done: [],
+};
 
-1. Clone this repository.
-2. Create a branch named `solution/<firstname-lastname>`.
-3. Complete the assigned challenge in `solutions/<firstname-lastname>/`.
-4. Add a short `README.md` inside your solution folder covering:
-   - Your approach
-   - Key tradeoffs
-   - How to run your solution
-   - What you would improve with more time
-5. Open a Pull Request to `main`.
+function transition(currentStatus, targetStatus) {
+  // returns { ok: true, from, to }
+  //      or { ok: false, error, code }
+}
+```
 
-## Challenge Catalog
+`transition()` has no side effects — it just validates and returns a result. The UI layer calls it and decides what to do next. This makes the logic easy to test in isolation.
 
-- [01 - Workflow Status Playground](challenges/01-status-transition/README.md)
+**Error codes** match the optional spec: `INVALID_STATUS`, `SELF_TRANSITION`, `INVALID_TRANSITION`.
 
-See all challenge entries in [challenges/README.md](challenges/README.md).
+**UI layout** is three panels:
+- **Items** — list of work items, each with an id, name, and current status badge
+- **Transition** — selected item detail + quick-select buttons for valid targets + a raw text input for intentionally testing invalid values
+- **Event Log** — timestamped history of every attempted transition with outcome codes
 
-## Evaluator Resources
+The raw input box is the key UX decision for this challenge: it lets you type anything (`DONE`, `cancelled`, `in_progress`) to intentionally trigger validation errors, which makes the system's rules observable.
 
-- [Evaluation Rubric](rubric/evaluation-rubric.md)
-- [Hiring Narrative (DonaLabs + PsonalHealth)](docs/hiring.md)
+## How to Run
 
-## Conventions
+No build step. Open the file directly:
 
-- Branch naming: `solution/<firstname-lastname>`
-- Solution location: `solutions/<firstname-lastname>/`
+```bash
+open workflow-playground/index.html
+# or
+python3 -m http.server 8080 --directory workflow-playground
+```
+
+Then visit `http://localhost:8080`.
+
+## Key Tradeoffs
+
+| Decision | Tradeoff |
+|---|---|
+| Single HTML file | Zero setup, easy to share — not how you'd ship a real app |
+| Transition map as plain object | Dead simple to read/extend, but not enforced by types |
+| UI renders from scratch on every state change | Simple mental model, would not scale to large item lists |
+| No persistence | State resets on reload — acceptable for a playground |
+
+## What I'd Improve With More Time
+
+**Code structure**
+- Move state machine into its own module (`workflow.js`) with exported types
+- Separate UI rendering into components
+- Add TypeScript for status/transition types
+
+**Features**
+- Persist items to `localStorage`
+- Transition history per item (not just global log)
+- Configurable transition rules (editable in the UI)
+- `blocked` and `cancelled` statuses with their own valid paths
+- Bulk transitions
+- Keyboard shortcuts
+
+**Testing**
+- Unit tests for `transition()` against `test_cases.json`
+- E2E tests for UI interactions
+
+**Production concerns**
+- REST API backing the state machine (e.g. `PATCH /items/:id/status`)
+- Optimistic UI updates with rollback on server error
+- Audit log stored server-side
